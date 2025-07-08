@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/providers/auth_providers.dart';
-import 'package:frontend/services/api_service.dart';
-import 'package:frontend/services/auth_service.dart';
+import '../services/api_service.dart';
+import '../services/auth_service.dart';
+import '../providers/auth_providers.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:frontend/screens/edit_agronomist_profile.dart';
+import '../screens/edit_agronomist_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

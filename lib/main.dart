@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/providers/auth_providers.dart';
-import 'package:frontend/screens/user_report_page.dart';
-import 'package:frontend/screens/ag_community.dart';
-import 'package:frontend/screens/ag_home.dart';
-import 'package:frontend/screens/ag_profile_page.dart';
-import 'package:frontend/screens/ag_scanned_data.dart';
-import 'package:frontend/screens/edit_agronomist_profile.dart';
-import 'package:frontend/screens/far_notification.dart';
-import 'package:frontend/screens/far_profile_page.dart';
+import 'providers/auth_providers.dart';
 import 'package:provider/provider.dart';
-
-import 'package:frontend/screens/admin_report_page.dart';
-import 'package:frontend/screens/community.dart';
-import 'package:frontend/screens/home.dart';
-import 'package:frontend/screens/login.dart';
-import 'package:frontend/screens/reset_password.dart';
-import 'package:frontend/screens/scan_page.dart';
-import 'package:frontend/screens/signup.dart';
+import 'screens/user_report_page.dart';
+import 'screens/ag_community.dart';
+import 'screens/ag_home.dart';
+import 'screens/ag_profile_page.dart';
+import 'screens/ag_scanned_data.dart';
+import 'screens/edit_agronomist_profile.dart';
+import 'screens/far_notification.dart';
+import 'screens/far_profile_page.dart';
+import 'screens/admin_report_page.dart';
+import 'screens/community.dart';
+import 'screens/home.dart';
+import 'screens/login.dart';
+import 'screens/reset_password.dart';
+import 'screens/scan_page.dart';
+import 'screens/signup.dart';
 
 void main() {
   runApp(
