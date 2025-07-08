@@ -4,8 +4,8 @@ import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_providers.dart';
-import '../screens/Scan_result.dart';
-import '../services/Api_service.dart';
+import '../screens/scan_result.dart';
+import '../services/api_service.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/Recommendation.dart';
-import 'package:frontend/services/Api_service.dart';
+import 'package:frontend/screens/recommendation.dart';
+import 'package:frontend/services/api_service.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_providers.dart';
 
