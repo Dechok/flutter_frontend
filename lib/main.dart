@@ -11,12 +11,12 @@ import 'package:frontend/screens/far_profilePage.dart';
 import 'package:provider/provider.dart';
 
 import 'package:frontend/screens/adminreport_page.dart';
-import 'package:frontend/screens/community.dart';
-import 'package:frontend/screens/home.dart';
-import 'package:frontend/screens/login.dart';
-import 'package:frontend/screens/reset_password.dart';
-import 'package:frontend/screens/scan_page.dart';
-import 'package:frontend/screens/signup.dart';
+import 'package:frontend/screens/Community.dart';
+import 'package:frontend/screens/Home.dart';
+import 'package:frontend/screens/Login.dart';
+import 'package:frontend/screens/Reset_password.dart';
+import 'package:frontend/screens/Scan_page.dart';
+import 'package:frontend/screens/Signup.dart';
 
 void main() {
   runApp(
