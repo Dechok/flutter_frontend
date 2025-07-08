@@ -52,8 +52,8 @@ class _AdminScanPageState extends State<SuperAdminPage> {
   Future<void> downloadExcel() async {
     final dio = Dio();
     final String url = selectedDisease == 'All'
-        ? 'http://192.168.131.104:3000/api/scans/export'
-        : 'http://192.168.131.104:3000/api/scans/export?disease=$selectedDisease';
+        ? 'https://zhingscanserver.onrender.com/api/scans/export'
+        : 'https://zhingscanserver.onrender.com/api/scans/export?disease=$selectedDisease';
 
     try {
       if (await Permission.manageExternalStorage.request().isGranted) {

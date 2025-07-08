@@ -295,3 +295,314 @@ class ScanBorderPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+
+// import 'dart:async';
+// import 'dart:io';
+// import 'dart:typed_data';
+// import 'package:flutter/foundation.dart' show kIsWeb;
+// import 'package:flutter/material.dart';
+// import 'package:camera/camera.dart';
+// import 'package:image_picker/image_picker.dart';
+// import 'package:provider/provider.dart';
+// import '../providers/auth_providers.dart';
+// import '../screens/scan_result.dart';
+// import '../services/api_service.dart';
+// import 'dart.html' as html;
+// class ScanPage extends StatefulWidget {
+//   const ScanPage({super.key});
+
+//   @override
+//   State<ScanPage> createState() => _ScanPageState();
+// }
+
+// class _ScanPageState extends State<ScanPage> {
+//   CameraController? _controller;
+//   bool _isInitialized = false;
+//   final ImagePicker _picker = ImagePicker();
+//   final ApiService _apiService = ApiService();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     if (!kIsWeb) {
+//       _initializeCamera();
+//     }
+//   }
+
+//   Future<void> _initializeCamera() async {
+//     final cameras = await availableCameras();
+//     if (cameras.isEmpty) return;
+//     _controller = CameraController(cameras.first, ResolutionPreset.high);
+//     await _controller!.initialize();
+//     if (!mounted) return;
+//     setState(() => _isInitialized = true);
+//   }
+
+//   Future<void> _captureImage() async {
+//     if (!(_controller?.value.isInitialized ?? false)) return;
+//     final image = await _controller!.takePicture();
+//     if (!mounted) return;
+//     await _reviewAndUpload(File(image.path));
+//   }
+
+//   Future<void> _pickFromGallery() async {
+//     if (kIsWeb) {
+//       final html.InputElement input = html.FileUploadInputElement()..accept = 'image/*';
+//       input.click();
+
+//       input.onChange.listen((event) async {
+//         final file = input.files?.first;
+//         if (file != null) {
+//           await _reviewAndUpload(file);
+//         }
+//       });
+//     } else {
+//       final picked = await _picker.pickImage(source: ImageSource.gallery);
+//       if (picked != null && mounted) {
+//         await _reviewAndUpload(File(picked.path));
+//       }
+//     }
+//   }
+
+//   Future<void> _reviewAndUpload(dynamic imageFile) async {
+//     final confirmed = await Navigator.push<bool>(
+//       context,
+//       MaterialPageRoute(
+//         builder: (_) => ImageReviewScreen(imageFile: imageFile),
+//       ),
+//     );
+//     if (confirmed != true) return;
+
+//     final auth = context.read<AuthProvider>();
+
+//     if (auth.token.isEmpty) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('You must be logged in to upload')),
+//       );
+//       return;
+//     }
+
+//     showDialog(
+//       context: context,
+//       barrierDismissible: false,
+//       builder: (_) => const Center(child: CircularProgressIndicator()),
+//     );
+
+//     try {
+//       final prediction = await _apiService.predictDisease(imageFile);
+//       final disease = prediction['predicted_class'] ?? 'Unknown';
+
+//       final scanData = await _apiService.uploadScan(
+//         imageFile: kIsWeb ? File('placeholder.jpg') : imageFile,
+//         disease: disease,
+//         token: auth.token,
+//       );
+
+//       if (!mounted) return;
+//       Navigator.pop(context); // close loading
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (_) => ScanResultPage(
+//             imagePath: kIsWeb ? '' : imageFile.path,
+//             scanData: scanData,
+//           ),
+//         ),
+//       );
+//     } catch (e) {
+//       Navigator.pop(context);
+//       print('[ERROR] $e');
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Upload failed: $e')),
+//       );
+//     }
+//   }
+
+//   @override
+//   void dispose() {
+//     _controller?.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: kIsWeb || _isInitialized
+//           ? Stack(
+//               children: [
+//                 if (!kIsWeb) Positioned.fill(child: CameraPreview(_controller!)),
+//                 if (!kIsWeb) Positioned.fill(child: CustomPaint(painter: ScanBorderPainter())),
+//                 _buildBottomControls(),
+//               ],
+//             )
+//           : const Center(child: CircularProgressIndicator()),
+//       bottomNavigationBar: _buildBottomNav(context),
+//     );
+//   }
+
+//   Widget _buildBottomControls() => Positioned(
+//         bottom: 30,
+//         left: 0,
+//         right: 0,
+//         child: Stack(
+//           alignment: Alignment.center,
+//           children: [
+//             Positioned(
+//               left: 50,
+//               child: FloatingActionButton(
+//                 heroTag: 'gallery',
+//                 backgroundColor: Colors.white,
+//                 onPressed: _pickFromGallery,
+//                 child: const Icon(Icons.photo, color: Colors.black),
+//               ),
+//             ),
+//             if (!kIsWeb)
+//               Container(
+//                 width: 80,
+//                 height: 80,
+//                 decoration: const BoxDecoration(
+//                   shape: BoxShape.circle,
+//                   color: Colors.white,
+//                   boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))],
+//                 ),
+//                 child: IconButton(
+//                   icon: const Icon(Icons.camera_alt, size: 36, color: Colors.black),
+//                   onPressed: _captureImage,
+//                 ),
+//               ),
+//           ],
+//         ),
+//       );
+
+//   Widget _buildBottomNav(BuildContext context) => BottomNavigationBar(
+//         currentIndex: 2,
+//         selectedItemColor: const Color(0xFF116736),
+//         unselectedItemColor: Colors.grey,
+//         onTap: (i) {
+//           switch (i) {
+//             case 0:
+//               Navigator.pushNamed(context, '/homepage');
+//               break;
+//             case 1:
+//               Navigator.pushNamed(context, '/report');
+//               break;
+//             case 2:
+//               Navigator.pushNamed(context, '/scan');
+//               break;
+//             case 3:
+//               Navigator.pushNamed(context, '/support');
+//               break;
+//           }
+//         },
+//         items: const [
+//           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+//           BottomNavigationBarItem(icon: Icon(Icons.report), label: 'Report'),
+//           BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), label: 'Scan'),
+//           BottomNavigationBarItem(icon: Icon(Icons.support_agent), label: 'Support'),
+//         ],
+//       );
+// }
+
+// class ImageReviewScreen extends StatelessWidget {
+//   final dynamic imageFile;
+//   const ImageReviewScreen({super.key, required this.imageFile});
+
+//   @override
+//   Widget build(BuildContext context) => Scaffold(
+//         backgroundColor: Colors.black,
+//         appBar: AppBar(
+//           backgroundColor: Colors.black,
+//           iconTheme: const IconThemeData(color: Colors.white),
+//         ),
+//         body: SafeArea(
+//           child: Column(
+//             children: [
+//               Expanded(child: Center(child: _previewImage())),
+//               Padding(
+//                 padding: const EdgeInsets.all(16),
+//                 child: Row(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     _roundBtn(Icons.close, Colors.red, () => Navigator.pop(context, false)),
+//                     const SizedBox(width: 30),
+//                     _roundBtn(Icons.check, const Color(0xFF116736), () => Navigator.pop(context, true)),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+
+//   Widget _previewImage() {
+//     if (kIsWeb) {
+//       final reader = html.FileReader();
+//       final completer = Completer<Image>();
+
+//       reader.readAsDataUrl(imageFile);
+//       reader.onLoadEnd.listen((_) {
+//         completer.complete(Image.network(reader.result as String));
+//       });
+
+//       return FutureBuilder<Image>(
+//         future: completer.future,
+//         builder: (_, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+//             return snapshot.data!;
+//           } else {
+//             return const CircularProgressIndicator();
+//           }
+//         },
+//       );
+//     } else {
+//       return Image.file(File(imageFile.path));
+//     }
+//   }
+
+//   Widget _roundBtn(IconData icon, Color color, VoidCallback onTap) => Container(
+//         width: 60,
+//         height: 60,
+//         decoration: const BoxDecoration(
+//           shape: BoxShape.circle,
+//           color: Colors.white,
+//           boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))],
+//         ),
+//         child: IconButton(icon: Icon(icon, color: color, size: 32), onPressed: onTap),
+//       );
+// }
+
+// class ScanBorderPainter extends CustomPainter {
+//   @override
+//   void paint(Canvas c, Size s) {
+//     const cLen = 30.0;
+//     final paint = Paint()
+//       ..color = const Color(0xFF116736)
+//       ..strokeWidth = 3
+//       ..style = PaintingStyle.stroke;
+
+//     final w = s.width * 0.8, h = s.height * 0.6;
+//     final l = (s.width - w) / 2, t = (s.height - h) / 2;
+//     final r = l + w, b = t + h;
+
+//     c
+//       ..drawLine(Offset(l, t), Offset(l + cLen, t), paint)
+//       ..drawLine(Offset(l, t), Offset(l, t + cLen), paint)
+//       ..drawLine(Offset(r - cLen, t), Offset(r, t), paint)
+//       ..drawLine(Offset(r, t), Offset(r, t + cLen), paint)
+//       ..drawLine(Offset(l, b - cLen), Offset(l, b), paint)
+//       ..drawLine(Offset(l, b), Offset(l + cLen, b), paint)
+//       ..drawLine(Offset(r - cLen, b), Offset(r, b), paint)
+//       ..drawLine(Offset(r, b), Offset(r, b - cLen), paint);
+
+//     final dim = Paint()..color = Colors.black.withOpacity(0.5);
+//     c
+//       ..drawRect(Rect.fromLTRB(0, 0, s.width, t), dim)
+//       ..drawRect(Rect.fromLTRB(0, b, s.width, s.height), dim)
+//       ..drawRect(Rect.fromLTRB(0, t, l, b), dim)
+//       ..drawRect(Rect.fromLTRB(r, t, s.width, b), dim);
+//   }
+
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+// }
