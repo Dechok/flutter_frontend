@@ -10,7 +10,7 @@ import 'package:frontend/screens/far_notification.dart';
 import 'package:frontend/screens/far_profilePage.dart';
 import 'package:provider/provider.dart';
 
-import 'package:frontend/screens/adminreport_page.dart';
+import 'package:frontend/screens/Adminreport_page.dart';
 import 'package:frontend/screens/Community.dart';
 import 'package:frontend/screens/Home.dart';
 import 'package:frontend/screens/Login.dart';
