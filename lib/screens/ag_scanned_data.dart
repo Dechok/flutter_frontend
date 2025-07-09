@@ -25,7 +25,7 @@ class _AdminScanPageState extends State<SuperAdminPage> {
 
   Future<void> fetchScans() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.131.104:3000/api/scans'));
+      final response = await http.get(Uri.parse('https://zhingscanserver.onrender.com/api/scans'));
 
       if (response.statusCode == 200) {
         setState(() {
